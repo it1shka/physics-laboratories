@@ -27,3 +27,5 @@ zippairs(A, B) = collect(zip(A, B))
 
 μD(D) = combine([typeA(D), typeB(0.05)])
 μd(D) = 0.5μD(D)
+
+μm(m) = combine([typeA(m), typeB(0.1)])

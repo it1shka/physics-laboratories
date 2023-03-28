@@ -1,3 +1,4 @@
+using Plots, GLM, DataFrames
 include("lab3func.jl")
 
 D = [49.40 98.50 149.45 99.35 127.50 140.20;
@@ -44,13 +45,31 @@ y = (i -> dms[i] * Tms[i] ^ 2).(1:6)
 @show x y errx erry
 
 # drawing actial plot
-using Plots
+function drawPointPlot()
+  plot(
+    x, y, 
+    seriestype = :scatter, label = "Point",
+    xerr = errx, yerr = erry
+  )
+  xlabel!("d², mm²")
+  ylabel!("dT², mm * s²")
+  title!("Point Plot")
+  savefig("point_plot.png")
+end
 
-plot(x, y, 
-  seriestype = :scatter, label = "Point",
-  xerr = errx, yerr = erry)
-xlabel!("d^2")
-ylabel!("dT^2")
-title!("Point Plot")
+function drawLinearRegressionPlot() 
+  model = lm(@formula(B ~ A), DataFrame(A=x, B=y))
+  b, a = coef(model)
+  @show a b
+  errb, erra = coeftable(model).cols[2]
+  @show erra errb
 
-savefig("point_plot.png")
+  f(x) = a*x + b
+
+  scatter(x, y, label = "Point")
+  plot!(x, f.(x), label = "Regression Line", xerr = errx, yerr = erry)
+  xlabel!("d², mm²")
+  ylabel!("dT², mm * s²")
+  title!("Regression Plot")
+  savefig("regression_plot.png")
+end
